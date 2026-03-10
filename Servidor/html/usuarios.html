@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<title>Gestor de Usuarios</title>
+
+<link rel="stylesheet" href="/css/estiloadmin.css">
+<link rel="icon" href="/multimedia/favicon-16x16.png">
+
+</head>
+
+<body>
+
+<img class="banner" src="/multimedia/banner.jpg">
+
+<div style="position:absolute; top:20px; left:20px;">
+<button onclick="volver()">⬅ Volver</button>
+</div>
+
+<div style="position:absolute; top:20px; right:20px;">
+<button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+</div>
+
+<h1 style="text-align:center;">Gestión de Usuarios</h1>
+
+<h2>Usuarios registrados</h2>
+
+<table class="tabla-usuarios" id="tablaUsuarios">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Usuario</th>
+<th>Programa</th>
+<th>Tipo</th>
+<th>Acción</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<br><br>
+
+<h2>Agregar usuario</h2>
+
+<form id="formUsuario">
+
+<label>Usuario</label><br>
+<input type="text" id="usuario" required><br><br>
+
+<label>Programa académico</label><br>
+<input type="text" id="programa" required><br><br>
+
+<label>Password</label><br>
+<input type="password" id="password" required><br><br>
+
+<button type="submit">➕ Agregar</button>
+
+</form>
+
+<br>
+
+<h2>Importar desde Excel</h2>
+
+<input type="file" id="archivoExcel" accept=".xlsx,.csv">
+<button onclick="importarExcel()">📂 Importar</button>
+
+<h2>Formato requerido para importar usuarios</h2>
+
+<table class="tabla-ejemplo">
+
+<thead>
+<tr>
+<th>usuario</th>
+<th>programa</th>
+<th>password</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>juan.perez</td>
+<td>Ingeniería</td>
+<td>1234</td>
+</tr>
+
+<tr>
+<td>maria.lopez</td>
+<td>Administración</td>
+<td>abcd</td>
+</tr>
+
+</tbody>
+
+</table>
+
+<p id="resultado"></p>
+
+<script src="/js/usuarios.js"></script>
+
+</body>
+</html>

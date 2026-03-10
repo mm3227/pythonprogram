@@ -1,0 +1,31 @@
+admin
+e6173902
+
+estructura 
+Servidor/
+
+	index.html
+	servidor_local.py
+	crear_db.py
+	admin.html
+	usuarios.html
+
+	html/
+	    profesores.html
+	    salones.html
+	    usuarios.html
+	    materias.html
+	    ciclo.html
+
+	css/
+	     estilo.css
+	     estiloadmin.css
+	
+	multimedia/
+	     esquina.jpg
+             favicon-16x16.png
+	     icono.ico
+             logo.jpg  
+   
+	data/
+             gestor.db
