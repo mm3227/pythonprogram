@@ -23,7 +23,7 @@ def crear_base_datos():
     # -------------------------
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario TEXT UNIQUE NOT NULL,
         programa TEXT,
         password TEXT NOT NULL,
@@ -36,11 +36,12 @@ def crear_base_datos():
     # -------------------------
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS materias (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         programa TEXT,
         materia TEXT,
         continuidad TEXT,
-        creditos INTEGER
+        creditos INTEGER,
+        UNIQUE(materia, programa)
     )
     """)
 
@@ -49,12 +50,13 @@ def crear_base_datos():
     # -------------------------
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS profesores (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         programa TEXT,
         nombre TEXT,
         contratacion TEXT,
         telefono TEXT,
-        email TEXT
+        email TEXT,
+        UNIQUE(nombre, programa)
     )
     """)
 
@@ -63,14 +65,26 @@ def crear_base_datos():
     # -------------------------
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS salones (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
         programa TEXT,
         edificio TEXT,
         salon TEXT,
-        capacidad INTEGER
+        capacidad INTEGER,
+        UNIQUE(programa, edificio, salon)
     )
     """)
-
+    
+    # -------------------------
+    # TABLA CICLOS
+    # -------------------------
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS cicloescolar (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ciclo TEXT UNIQUE
+    )
+    """)
+    
+   
     # -------------------------
     # VERIFICAR ADMIN
     # -------------------------

@@ -3,105 +3,114 @@ import socketserver
 import socket
 import sys
 import urllib.parse
-from crear_db import crear_base_datos
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 import hashlib
 import json
 import secrets
+import config
+
+#==================================================================
+from servidor_utils import obtener_ip_local, verificar_usuario, obtener_sesion, sesiones
+from crear_db import crear_base_datos
+from pgestor import profesores_api
+from pgestor import programas_api
+from pgestor import materias_api
+from pgestor import salones_api
+from pgestor import profesores_user_api
+from pgestor import materias_user_api
+#=============================================
+from ciclos import ciclos_api
+
+#==================================================================
+#from para users
+from pgestor import salones_user_api
 
 PUERTO = 8000
-sesiones = {}
-
-
-def obtener_ip_local():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except:
-        return "127.0.0.1"
-
-def verificar_usuario(usuario, password):
-
-    hash_password = hashlib.sha256(password.encode()).hexdigest()
-
-    conexion = sqlite3.connect("data/gestor.db")
-    cursor = conexion.cursor()
-
-    cursor.execute(
-        "SELECT tipo_usuario FROM usuarios WHERE usuario=? AND password=?",
-        (usuario, hash_password)
-    )
-
-    resultado = cursor.fetchone()
-    conexion.close()
-
-    if resultado:
-        return resultado[0]  # devuelve "admin" o "usuario"
-    else:
-        return None
-    
-def obtener_sesion(handler):
-    cookie = handler.headers.get("Cookie")
-    if not cookie:
-        return None
-    partes = cookie.split("=")
-    if len(partes) < 2:
-        return None
-    token = partes[1]
-    return sesiones.get(token)
-    
+#=======================================================   
 class MiHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-
         rol = obtener_sesion(self)
 
-        # proteger paginas de admin
-        if self.path.startswith("/admin"):
-
-            if rol != "admin":
-
-                self.send_response(403)
-                self.end_headers()
-                self.wfile.write(b"Acceso restringido")
-                return
-
-        # listar usuarios
+        # =====================================================
+        # Rutas de API (no requieren protección de archivos)
+        # =====================================================
         if self.path == "/listar_usuarios":
-
             conexion = sqlite3.connect("data/gestor.db")
             cursor = conexion.cursor()
-
-            cursor.execute(
-                "SELECT id, usuario, programa, tipo_usuario FROM usuarios"
-            )
-
+            cursor.execute("SELECT id, usuario, programa, tipo_usuario FROM usuarios")
             filas = cursor.fetchall()
             conexion.close()
-
-            datos = []
-
-            for f in filas:
-                datos.append({
-                    "id": f[0],
-                    "usuario": f[1],
-                    "programa": f[2],
-                    "tipo_usuario": f[3]
-                })
-
+            datos = [{"id": f[0], "usuario": f[1], "programa": f[2], "tipo_usuario": f[3]} for f in filas]
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
-
             self.wfile.write(json.dumps(datos).encode())
+            return
 
-        else:
+        elif self.path == "/listar_profesores":
+            profesores_api.listar_profesores(self)
+            return
 
-            super().do_GET()
+        elif self.path == "/listar_programas":
+            programas_api.listar_programas(self)
+            return
+        
+        elif self.path == "/listar_materias":
+            materias_api.listar_materias(self)
+            return
+        
+        elif self.path == "/listar_salones":
+            salones_api.listar_salones(self)
+            return
+#===============================================================================
+        #USERS LISTAR
+        elif self.path == "/listar_salones_usuario":
+            salones_user_api.listar_salones_usuario(self)
+            return
+        elif self.path == "/listar_profesores_usuario":
+            profesores_user_api.listar_profesores_usuario(self)
+            return
+        elif self.path == "/listar_materias_usuario":
+            materias_user_api.listar_materias_usuario(self)
+            return
+#===============================================================================
+        elif self.path == "/listar_ciclos":
+            ciclos_api.listar_ciclos(self)
+            return
+        """
+        # =====================================================
+        # Protección de páginas HTML
+        # =====================================================
+        # Protección de páginas ADMIN
+        # ==========================================
+        if self.path.startswith("/html/") or self.path == "/admin.html":
+
+            if rol != "admin":
+
+                self.send_response(302)
+                self.send_header("Location","/index.html")
+                self.end_headers()
+                return
+
+
+        # ==========================================
+        # Protección de páginas USER
+        # ==========================================
+        if self.path.startswith("/htmlusers/") or self.path == "/users.html":
+
+            if rol != "usuario":
+
+                self.send_response(302)
+                self.send_header("Location","/index.html")
+                self.end_headers()
+                return
+        """
+        # =====================================================
+        # Para el resto de rutas, servir archivos estáticos
+        # =====================================================
+        super().do_GET()                                
 
     def do_POST(self):
         # -------------------------
@@ -122,7 +131,10 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
             if rol:
 
                 token = secrets.token_hex(16)
-                sesiones[token] = rol
+                sesiones[token] = {
+                    "usuario": usuario,
+                    "rol": rol
+                }
 
                 if rol == "admin":
                     destino = "/admin.html"
@@ -144,8 +156,7 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(302)
                 self.send_header("Location", "/index.html?error=1")
                 self.end_headers()
-        
-
+                      
         # -------------------------
         # AGREGAR USUARIO
         # -------------------------
@@ -335,7 +346,87 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"Usuario eliminado")
-    
+        
+        #=================================================
+        # Agregar, Eliminar, Editar e Importar  Profesores
+        #=================================================
+        elif self.path == "/agregar_profesor":
+            profesores_api.agregar_profesor(self)
+        elif self.path == "/eliminar_profesor":
+            profesores_api.eliminar_profesor(self)
+        elif self.path == "/editar_profesor":
+            profesores_api.editar_profesor(self)
+        elif self.path == "/importar_profesores":
+            profesores_api.importar_profesores(self)
+            
+        #=================================================
+        # Agregar, Eliminar, Editar e Importar  Materias
+        #=================================================
+        elif self.path == "/agregar_materia":
+            materias_api.agregar_materia(self)
+        elif self.path == "/eliminar_materia":
+            materias_api.eliminar_materia(self)
+        elif self.path == "/editar_materia":
+            materias_api.editar_materia(self)          
+        elif self.path == "/importar_materias":
+            materias_api.importar_materias(self)
+               
+        #=================================================
+        # Agregar, Eliminar, Editar e Importar  Salones
+        #=================================================   
+        elif self.path == "/agregar_salon":
+            salones_api.agregar_salon(self)
+        elif self.path == "/eliminar_salon":
+            salones_api.eliminar_salon(self)
+        elif self.path == "/editar_salon":
+            salones_api.editar_salon(self)
+        elif self.path == "/importar_salones":
+            salones_api.importar_salones(self)
+            
+        #=================================================
+        # users Salones
+        #=================================================
+        elif self.path == "/agregar_salon_usuario":
+            salones_user_api.agregar_salon_usuario(self)
+        elif self.path == "/eliminar_salon_usuario":
+            salones_user_api.eliminar_salon_usuario(self)
+        elif self.path == "/editar_salon_usuario":
+            salones_user_api.editar_salon_usuario(self)
+        elif self.path == "/importar_salones_usuario":
+            salones_user_api.importar_salones_usuario(self)
+        #=================================================
+        # users Profesores
+        #=================================================     
+        elif self.path == "/agregar_profesor_usuario":
+            profesores_user_api.agregar_profesor_usuario(self)
+        elif self.path == "/eliminar_profesor_usuario":
+            profesores_user_api.eliminar_profesor_usuario(self)
+        elif self.path == "/editar_profesor_usuario":
+            profesores_user_api.editar_profesor_usuario(self)
+        elif self.path == "/importar_profesores_usuario":
+            profesores_user_api.importar_profesores_usuario(self)
+        #=================================================
+        # users Materias
+        #=================================================
+        elif self.path == "/agregar_materia_usuario":
+            materias_user_api.agregar_materia_usuario(self)
+        elif self.path == "/eliminar_materia_usuario":
+            materias_user_api.eliminar_materia_usuario(self)
+        elif self.path == "/editar_materia_usuario":
+            materias_user_api.editar_materia_usuario(self)
+        elif self.path == "/importar_materias_usuario":
+            materias_user_api.importar_materias_usuario(self)
+        
+        #=================================================
+        # Agregar, Eliminar, Ciclos
+        #=================================================
+        elif self.path == "/crear_ciclo":
+            ciclos_api.crear_ciclo(self)
+        elif self.path == "/eliminar_ciclo":
+            ciclos_api.eliminar_ciclo(self)
+                       
+        
+#====================================================================================
 def mostrar_info(ip_local, puerto, admin_creado, password):
     root = tk.Tk()
     root.withdraw()

@@ -3,15 +3,43 @@
 
 <head>
 <meta charset="UTF-8">
-<title>Panel</title>
+<title>Panel de Usuario</title>
+
+<link rel="stylesheet" href="/css/estiloadmin.css">
+
 </head>
 
 <body>
 
-<h1>Bienvenido al sistema</h1>
+<button class="logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
 
-<p>Has iniciado sesión correctamente.</p>
+<img class="logo" src="/multimedia/logo.jpg" width="400">
+
+<h1>Panel de Usuario</h1>
+
+<div class="menu">
+
+<button class="btn profesores" onclick="ir('profesores')">Profesores</button>
+
+<button class="btn salones" onclick="ir('salones')">Salones</button>
+
+<button class="btn materias" onclick="ir('materias')">Materias</button>
+
+<button class="btn ciclo" onclick="ir('ciclo')">Ciclo Escolar</button>
+
+</div>
+
+<script>
+
+function ir(pagina){
+window.location.href = "htmlusers/" + pagina + ".html"
+}
+
+function cerrarSesion(){
+window.location.href = "/index.html"
+}
+
+</script>
 
 </body>
-
 </html>

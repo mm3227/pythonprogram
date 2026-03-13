@@ -15,6 +15,7 @@
 <body>
 
 <img class="banner" src="/multimedia/banner.jpg">
+
 <div style="position:absolute; top:20px; left:20px;">
 <button onclick="volver()">⬅ Volver</button>
 </div>
@@ -23,12 +24,12 @@
 <button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
 </div>
 
-
 <h1>Gestión de Materias</h1>
 
 <h2>Materias registradas</h2>
 
-<input type="text" id="buscadormaterias" placeholder="Buscar materia">
+<input type="text" id="buscadorMaterias" placeholder="Buscar materia" onkeyup="buscarMateria()">
+
 <div id="resultadoBusqueda"></div>
 
 <table class="tabla-materias" id="tablaMaterias">
@@ -36,7 +37,6 @@
 <thead>
 
 <tr>
-<th>Programa</th>
 <th>Materia</th>
 <th>Continuidad</th>
 <th>Créditos</th>
@@ -45,14 +45,13 @@
 
 </thead>
 
-<tbody></tbody>
+<tbody id="tabla"></tbody>
 
 </table>
-<br>
-<h2> Agregar / Editar Materia</h2>
 
-<input list="listaProgramas" id="programa" placeholder="Programa">
-<datalist id="listaProgramas"></datalist>
+<br>
+
+<h2>Agregar / Editar Materia</h2>
 
 <input type="text" id="materia" placeholder="Materia">
 <input type="text" id="continuidad" placeholder="Continuidad">
@@ -60,12 +59,13 @@
 
 <br><br>
 
-<button onclick="guardarMateria()">Guardar</button>
-</div>
+<button onclick="agregarMateria()">Guardar</button>
 
 <br><br>
+
 <h2>Importar desde Excel</h2>
-<input type="file" id="archivoExcel" accept=".xlsx,.csv">.
+
+<input type="file" id="archivoExcel" accept=".xlsx">
 <button onclick="importarExcel()">📂 Importar</button>
 
 <br><br>
@@ -75,7 +75,6 @@
 <table class="tabla-ejemplo">
 
 <tr>
-<th>Programa</th>
 <th>Materia</th>
 <th>Continuidad</th>
 <th>Créditos</th>
@@ -84,25 +83,22 @@
 <tbody>
 
 <tr>
-<td>Ingeniería</td>
 <td>CALCULO INTEGRAL</td>
 <td>SI</td>
 <td>5</td>
 </tr>
 
 <tr>
-<td>Ingeniería</td>
 <td>CALCULO DIFERENCIAL</td>
 <td>NO</td>
 <td>5</td>
 </tr>
 
-
 </tbody>
 
 </table>
 
-<script src="/js/materias.js"></script>
+<script src="/js/user_materias.js"></script>
 
 </body>
 </html>
