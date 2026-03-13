@@ -40,7 +40,7 @@ def listar_salones(handler):
     handler.end_headers()
 
     handler.wfile.write(json.dumps(lista).encode())
-
+    
 
 def agregar_salon(handler):
 

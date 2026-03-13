@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="/css/estiloadmin.css">
 <link rel="stylesheet" href="/css/salones.css">
 <link rel="icon" href="/multimedia/favicon-16x16.png">
+
 <script src="/js/salones.js" defer></script>
 
 </head>
@@ -25,35 +26,28 @@
 <button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
 </div>
 
-
-
-<h1>Gestión de Salones</h2>
+<h1>Gestión de Salones</h1>
 <h2>Salones registrados</h2>
-
-<div>
-
-
-</div>
 
 <hr>
 
 <h3>Buscar salón</h3>
 
-<input type="text" id="buscadorSalones" placeholder="Buscar salón o edificio">
-<div id="resultadoBusqueda"></div>
+<input
+type="text"
+id="buscadorSalones"
+placeholder="Buscar salón o edificio"
+onkeyup="buscarSalon()"
+>
 
 <hr>
 
-<table
-id="tablaSalones"
-class="tabla-salones"
->
+<table id="tablaSalones" class="tabla-salones">
 
 <thead>
 
 <tr>
-
-<th>Programa</th>
+<th>programa</th>
 <th>Edificio</th>
 <th>Salón</th>
 <th>Capacidad</th>
@@ -63,27 +57,18 @@ class="tabla-salones"
 
 </thead>
 
-<tbody>
-
-</tbody>
+<tbody id="tabla"></tbody>
 
 </table>
 
 <hr>
 
 <h3>Nuevo salón</h3>
-
 <form id="formSalon">
 
 <label>Programa</label>
-
-<input
-list="listaProgramas"
-id="programa"
->
-
+<input type="text" id="programa" list="listaProgramas">
 <datalist id="listaProgramas"></datalist>
-
 <br><br>
 
 <label>Edificio</label>
@@ -115,7 +100,7 @@ id="capacidad"
 
 <button
 type="button"
-onclick="guardarSalon()"
+onclick="agregarSalon()"
 >
 
 Guardar
@@ -128,42 +113,48 @@ Guardar
 
 <h3>Importar Excel</h3>
 
-<form id="formImportarExcel">
-<input type="file" name="archivo" accept=".xlsx" required>
-<button type="button" onclick="importarExcel()">📂 Importar</button>
-</form>
+<input
+type="file"
+id="archivoExcel"
+accept=".xlsx"
+>
+
+<button onclick="importarExcel()">
+📂Importar
+</button>
 
 <h2>Formato requerido para importar materias</h2>
 
 <table class="tabla-ejemplo">
 
 <tr>
-<th>Programa</th>
-<th>Materia</th>
-<th>Continuidad</th>
-<th>Créditos</th>
+<th>programa</th>
+<th>Edificio</th>
+<th>Salón</th>
+<th>Capacidad</th>
 </tr>
 
 <tbody>
 
 <tr>
 <td>Ingeniería</td>
-<td>CALCULO INTEGRAL</td>
-<td>SI</td>
-<td>5</td>
+<td>E12</td>
+<td>01</td>
+<td>40</td>
 </tr>
 
 <tr>
-<td>Ingeniería</td>
-<td>CALCULO DIFERENCIAL</td>
-<td>NO</td>
-<td>5</td>
+<td>Robótica</td>
+<td>E17B</td>
+<td>11</td>
+<td>35</td>
 </tr>
 
 
 </tbody>
 
 </table>
+
 
 
 

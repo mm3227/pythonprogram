@@ -214,47 +214,28 @@ console.error(e)
 }
 
 async function importarExcel(){
+    const inputFile = document.getElementById("archivoExcel");
+    if (!inputFile || inputFile.files.length === 0) {
+        alert("Seleccione un archivo Excel");
+        return;
+    }
+    const archivo = inputFile.files[0];
+    const formData = new FormData();
+    formData.append("archivo", archivo);
 
-const form = document.getElementById("formImportarExcel")
-
-if(!form){
-alert("Formulario de importación no encontrado")
-return
-}
-
-const formData = new FormData(form)
-
-const archivo = formData.get("archivo")
-
-if(!archivo || archivo.size === 0){
-
-alert("Seleccione un archivo Excel")
-return
-
-}
-
-try{
-
-const respuesta = await fetch("/importar_salones",{
-method:"POST",
-body:formData
-})
-
-const texto = await respuesta.text()
-
-alert(texto)
-
-form.reset()
-
-cargarSalones()
-
-}catch(e){
-
-console.error(e)
-alert("Error importando Excel")
-
-}
-
+    try {
+        const respuesta = await fetch("/importar_salones", {
+            method: "POST",
+            body: formData
+        });
+        const texto = await respuesta.text();
+        alert(texto);
+        inputFile.value = ""; // Limpiar el input
+        cargarSalones(); // Recargar la tabla
+    } catch(e) {
+        console.error(e);
+        alert("Error importando Excel");
+    }
 }
 
 document.addEventListener("DOMContentLoaded",function(){

@@ -20,6 +20,7 @@ from pgestor import materias_api
 from pgestor import salones_api
 from pgestor import profesores_user_api
 from pgestor import materias_user_api
+from pgestor import grupos_api
 #=============================================
 from ciclos import ciclos_api
 
@@ -31,8 +32,8 @@ PUERTO = 8000
 #=======================================================   
 class MiHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
+        ruta = self.path.split("?")[0]
         rol = obtener_sesion(self)
-
         # =====================================================
         # Rutas de API (no requieren protección de archivos)
         # =====================================================
@@ -52,18 +53,19 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
         elif self.path == "/listar_profesores":
             profesores_api.listar_profesores(self)
             return
-
         elif self.path == "/listar_programas":
             programas_api.listar_programas(self)
-            return
-        
+            return       
         elif self.path == "/listar_materias":
-            materias_api.listar_materias(self)
+            materias_api.listar_materias(self)                  
+        elif ruta == "/listar_grupos":
+            grupos_api.listar_grupos(self)
             return
-        
         elif self.path == "/listar_salones":
             salones_api.listar_salones(self)
             return
+      
+
 #===============================================================================
         #USERS LISTAR
         elif self.path == "/listar_salones_usuario":
@@ -75,6 +77,8 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
         elif self.path == "/listar_materias_usuario":
             materias_user_api.listar_materias_usuario(self)
             return
+        
+        
 #===============================================================================
         elif self.path == "/listar_ciclos":
             ciclos_api.listar_ciclos(self)
@@ -113,6 +117,7 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
         super().do_GET()                                
 
     def do_POST(self):
+        ruta = self.path.split("?")[0]
         # -------------------------
         # LOGIN
         # -------------------------
@@ -424,7 +429,18 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
             ciclos_api.crear_ciclo(self)
         elif self.path == "/eliminar_ciclo":
             ciclos_api.eliminar_ciclo(self)
-                       
+        #=================================================
+        # Agregar, Eliminar, Editar e Importar Grupos
+        #=================================================           
+        elif ruta == "/agregar_grupo":
+            grupos_api.agregar_grupo(self)
+        elif ruta == "/eliminar_grupo":
+            grupos_api.eliminar_grupo(self)
+        elif ruta == "/editar_grupo":
+            grupos_api.editar_grupo(self)
+        elif ruta == "/importar_grupos":
+            grupos_api.importar_grupos(self)
+                               
         
 #====================================================================================
 def mostrar_info(ip_local, puerto, admin_creado, password):

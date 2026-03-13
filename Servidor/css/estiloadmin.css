@@ -75,11 +75,12 @@ opacity:0.8;
 
 /* COLORES DE BOTONES */
 
-.profesores{ background:#3498db; }
-.salones{ background:#2ecc71; }
-.usuarios{ background:#9b59b6; }
-.materias{ background:#f39c12; }
-.ciclo{ background:#e74c3c; }
+.btn.usuarios{ background:#34495e; }
+.btn.profesores{ background:#2980b9; }
+.btn.salones{ background:#27ae60; }
+.btn.materias{ background:#f39c12; }
+.btn.grupos{ background:#8e44ad; }
+.btn.ciclo{ background:#c0392b; }
 
 /* CONTENEDOR DE TABLAS */
 

@@ -84,6 +84,46 @@ def crear_base_datos():
     )
     """)
     
+    # -------------------------
+    # TABLA GRUPOS
+    # -------------------------
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS grupos (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        programa TEXT,
+        semestre INTEGER,
+        grupo TEXT,
+        tipo TEXT,
+        alumnos INTEGER,
+        UNIQUE(programa, semestre, grupo, tipo)
+    )
+    """)
+
+    # -------------------------
+    # TABLA HORARIOS
+    # -------------------------
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS horarios (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        programa TEXT,
+        semestre INTEGER,
+        grupo TEXT,
+        tipo TEXT,
+        edificio TEXT,
+        salon TEXT,
+        materia TEXT,
+        profesor TEXT,
+        lunes TEXT,
+        martes TEXT,
+        miercoles TEXT,
+        jueves TEXT,
+        viernes TEXT,
+        sabado TEXT,
+        hora TEXT,
+        comentario TEXT
+    )
+    """)
+    
    
     # -------------------------
     # VERIFICAR ADMIN
