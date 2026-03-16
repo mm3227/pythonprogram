@@ -21,6 +21,7 @@ from pgestor import salones_api
 from pgestor import profesores_user_api
 from pgestor import materias_user_api
 from pgestor import grupos_api
+from pgestor import grupos_user_api
 #=============================================
 from ciclos import ciclos_api
 
@@ -63,8 +64,7 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
             return
         elif self.path == "/listar_salones":
             salones_api.listar_salones(self)
-            return
-      
+            return        
 
 #===============================================================================
         #USERS LISTAR
@@ -77,6 +77,10 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
         elif self.path == "/listar_materias_usuario":
             materias_user_api.listar_materias_usuario(self)
             return
+        
+        elif ruta == "/listar_grupos_usuario":
+            grupos_user_api.listar_grupos_usuario(self)
+            return 
         
         
 #===============================================================================
@@ -440,6 +444,12 @@ class MiHandler(http.server.SimpleHTTPRequestHandler):
             grupos_api.editar_grupo(self)
         elif ruta == "/importar_grupos":
             grupos_api.importar_grupos(self)
+        elif self.path == "/agregar_grupo_usuario":
+            grupos_user_api.agregar_grupo_usuario(self)
+        elif self.path == "/importar_grupos_usuario":
+            grupos_user_api.importar_grupos_usuario(self)
+        elif self.path == "/editar_grupo_usuario":
+            grupos_user_api.editar_grupo_usuario(self)
                                
         
 #====================================================================================

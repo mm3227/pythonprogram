@@ -95,6 +95,7 @@ def crear_base_datos():
         grupo TEXT,
         tipo TEXT,
         alumnos INTEGER,
+        materias INTEGER,
         UNIQUE(programa, semestre, grupo, tipo)
     )
     """)

@@ -2,13 +2,148 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
-<title>Grupos</title>
+<title>Gestión de Grupos</title>
+
+<link rel="stylesheet" href="/css/estiloadmin.css">
+<link rel="stylesheet" href="/css/grupos.css">
+<link rel="icon" href="/multimedia/favicon-16x16.png">
+
 </head>
 
 <body>
 
-<h1>Grupos Usuarios</h1>
+<img class="banner" src="/multimedia/banner.jpg">
+
+<div style="position:absolute; top:20px; left:20px;">
+<button onclick="volver()">⬅ Volver</button>
+</div>
+
+<div style="position:absolute; top:20px; right:20px;">
+<button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+</div>
+
+<h1>Gestión de Grupos</h1>
+
+<h2>Grupos registrados</h2>
+
+<input type="text" id="buscadorgrupos" placeholder="Buscar grupo">
+
+<table class="tabla-grupos" id="tablaGrupos">
+
+<thead>
+<tr>
+<th>Semestre</th>
+<th>Grupo</th>
+<th>Tipo</th>
+<th>Alumnos</th>
+<th>Materias</th>
+<th>Acción</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<br>
+<div class="paginacion">
+
+<button onclick="anterior()">⬅ Anterior</button>
+
+<span id="infoPagina">Página 1</span>
+
+<button onclick="siguiente()">Siguiente ➡</button>
+
+</div>
+<br>
+
+
+<h2>Agregar / Editar Grupo</h2>
+
+<input type="number" id="semestre" min="1" placeholder="Semestre">
+
+<input type="text" id="grupo" placeholder="Grupo">
+
+<select id="tipo">
+<option value="">Tipo</option>
+<option value="Escolarizado">Escolarizado</option>
+<option value="Semiescolarizado">Semiescolarizado</option>
+</select>
+
+<input type="number" id="alumnos" placeholder="Alumnos">
+<input type="number" id="materias" placeholder="Cantidad de materias">
+
+<br><br>
+
+<input type="hidden" id="grupoId">
+<button id="btnGuardar" onclick="guardarGrupo()">Guardar</button>
+
+<h2>Importar desde Excel</h2>
+
+<input type="file" id="archivoExcel" accept=".xlsx,.csv">
+<button onclick="importarExcel()">📂 Importar</button>
+
+<br><br>
+
+<h2>Formato requerido para importar grupos</h2>
+
+<table class="tabla-ejemplo">
+
+<tr>
+<th>Semestre</th>
+<th>Grupo</th>
+<th>Tipo</th>
+<th>Alumnos</th>
+<th>Materias</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>A</td>
+<td>Escolarizado</td>
+<td>35</td>
+<td>5</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>B</td>
+<td>Semiescolarizado</td>
+<td>30</td>
+<td>7</td>
+</tr>
+
+</table>
+
+<script src="/js/user_grupos.js"></script>
+
+<div id="modalEditarGrupo" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModal()">&times;</span>
+    <h2>Editar Grupo</h2>
+
+    <label>Semestre</label>
+    <input type="number" id="editarSemestre">
+
+    <label>Grupo</label>
+    <input type="text" id="editarGrupo">
+
+    <label>Tipo</label>
+    <select id="editarTipo">
+      <option value="Escolarizado">Escolarizado</option>
+      <option value="Semiescolarizado">Semiescolarizado</option>
+    </select>
+
+    <label>Alumnos</label>
+    <input type="number" id="editarAlumnos">
+    <input type="number" id="editarMaterias">
+
+    <br><br>
+    <button onclick="guardarEdicion()">Guardar Cambios</button>
+  </div>
+</div>
 
 </body>
 </html>

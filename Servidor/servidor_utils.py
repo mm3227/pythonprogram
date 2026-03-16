@@ -51,3 +51,44 @@ def obtener_sesion(handler):
         return None
 
     return sesion["rol"]
+
+def obtener_usuario_actual(handler):
+
+    cookie = handler.headers.get("Cookie")
+
+    if not cookie:
+        return None
+
+    partes = cookie.split("=")
+
+    if len(partes) < 2:
+        return None
+
+    token = partes[1]
+
+    return sesiones.get(token)
+
+def obtener_programa_usuario(handler):
+
+    sesion = obtener_usuario_actual(handler)
+
+    if not sesion:
+        return None
+
+    usuario = sesion["usuario"]
+
+    conexion = sqlite3.connect(config.DB_PATH)
+    cursor = conexion.cursor()
+
+    cursor.execute(
+        "SELECT programa FROM usuarios WHERE usuario=?",
+        (usuario,)
+    )
+
+    resultado = cursor.fetchone()
+    conexion.close()
+
+    if resultado:
+        return resultado[0]
+
+    return None

@@ -1,4 +1,8 @@
 let grupos=[]
+let pagina = 1
+const limite = 10
+let total = 0
+
 
 function volver(){
 window.location.href="/admin.html"
@@ -10,13 +14,22 @@ window.location.href="/index.html"
 
 async function cargarGrupos(){
 
-const respuesta = await fetch("/listar_grupos")
+const texto = document.getElementById("buscadorgrupos").value
 
-grupos = await respuesta.json()
+const respuesta = await fetch(
+`/listar_grupos?pagina=${pagina}&limite=${limite}&buscar=${encodeURIComponent(texto)}`
+)
+
+const resultado = await respuesta.json()
+
+grupos = resultado.datos
+total = resultado.total
 
 mostrarGrupos(grupos)
+actualizarPaginacion()
 
 }
+
 
 function mostrarGrupos(lista){
 
@@ -34,6 +47,7 @@ tabla.insertAdjacentHTML("beforeend",`
 <td>${g.grupo}</td>
 <td>${g.tipo}</td>
 <td>${g.alumnos}</td>
+<td>${g.materias}</td>
 
 <td>
     <button onclick="abrirModalEditar(${g.id})">✏️</button>
@@ -46,34 +60,6 @@ tabla.insertAdjacentHTML("beforeend",`
 
 }
 
-async function guardarGrupo(){
-
-const datos={
-
-programa:document.getElementById("programa").value,
-semestre:document.getElementById("semestre").value,
-grupo:document.getElementById("grupo").value,
-tipo:document.getElementById("tipo").value,
-alumnos:document.getElementById("alumnos").value
-
-}
-
-const respuesta = await fetch("/agregar_grupo",{
-
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(datos)
-
-})
-
-alert(await respuesta.text())
-
-cargarGrupos()
-
-}
-
 async function guardarGrupo() {
     const id = document.getElementById("grupoId").value;
 
@@ -82,7 +68,8 @@ async function guardarGrupo() {
         semestre: document.getElementById("semestre").value,
         grupo: document.getElementById("grupo").value,
         tipo: document.getElementById("tipo").value,
-        alumnos: document.getElementById("alumnos").value
+        alumnos: document.getElementById("alumnos").value,
+        materias: document.getElementById("materias").value
     };
 
     let url = "/agregar_grupo";
@@ -107,6 +94,7 @@ async function guardarGrupo() {
     document.getElementById("grupo").value = "";
     document.getElementById("tipo").value = "";
     document.getElementById("alumnos").value = "";
+    document.getElementById("editarMaterias").value = "";
     document.getElementById("grupoId").value = "";
     document.getElementById("btnGuardar").textContent = "Guardar";
 
@@ -161,19 +149,8 @@ cargarGrupos()
 
 function buscarGrupo(){
 
-const texto=document
-.getElementById("buscadorgrupos")
-.value
-.toLowerCase()
-
-const filtrados=grupos.filter(g=>
-
-g.grupo.toLowerCase().includes(texto) ||
-g.programa.toLowerCase().includes(texto)
-
-)
-
-mostrarGrupos(filtrados)
+pagina = 1 // resetear a primera página
+cargarGrupos()
 
 }
 
@@ -181,15 +158,10 @@ document.addEventListener("DOMContentLoaded",function(){
 
 cargarGrupos()
 cargarProgramas()
-cargarSalones()
 
 document
 .getElementById("buscadorgrupos")
 .addEventListener("input",buscarGrupo)
-
-document
-.getElementById("edificio")
-.addEventListener("change",filtrarSalones)
 
 })
 
@@ -204,6 +176,7 @@ function editarGrupo(id) {
     document.getElementById("grupo").value = grupo.grupo;
     document.getElementById("tipo").value = grupo.tipo;
     document.getElementById("alumnos").value = grupo.alumnos;
+    document.getElementById("materias").value = grupo.materias;
 
     // Guardar el id en un input oculto para saber que es edición
     document.getElementById("grupoId").value = id;
@@ -222,6 +195,7 @@ function abrirModalEditar(id) {
     document.getElementById("editarGrupo").value = grupo.grupo;
     document.getElementById("editarTipo").value = grupo.tipo;
     document.getElementById("editarAlumnos").value = grupo.alumnos;
+    document.getElementById("editarMaterias").value = grupo.materias;
 
     // Guardar id del grupo para la edición
     document.getElementById("grupoId").value = id;
@@ -232,6 +206,14 @@ function abrirModalEditar(id) {
 
 function cerrarModal() {
     document.getElementById("modalEditarGrupo").style.display = "none";
+    // limpiar campos
+    document.getElementById("editarPrograma").value = "";
+    document.getElementById("editarSemestre").value = "";
+    document.getElementById("editarGrupo").value = "";
+    document.getElementById("editarTipo").value = "";
+    document.getElementById("editarAlumnos").value = "";
+    document.getElementById("editarMaterias").value = "";
+    document.getElementById("grupoId").value = "";   
 }
 
 async function guardarEdicion() {
@@ -244,7 +226,8 @@ async function guardarEdicion() {
         semestre: document.getElementById("editarSemestre").value,
         grupo: document.getElementById("editarGrupo").value,
         tipo: document.getElementById("editarTipo").value,
-        alumnos: document.getElementById("editarAlumnos").value
+        alumnos: document.getElementById("editarAlumnos").value,
+        materias: document.getElementById("editarMaterias").value
     };
 
     const respuesta = await fetch("/editar_grupo", {
@@ -257,4 +240,31 @@ async function guardarEdicion() {
 
     cerrarModal();
     cargarGrupos();
+}
+
+function actualizarPaginacion(){
+
+const totalPaginas = Math.ceil(total / limite)
+
+document.getElementById("infoPagina").textContent =
+`Página ${pagina} de ${totalPaginas}`
+
+}
+
+function siguiente(){
+
+if(pagina * limite < total){
+pagina++
+cargarGrupos()
+}
+
+}
+
+function anterior(){
+
+if(pagina > 1){
+pagina--
+cargarGrupos()
+}
+
 }
