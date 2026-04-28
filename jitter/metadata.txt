@@ -1,0 +1,19 @@
+Timing jitter acquisition metadata
+Timestamp: 2026-04-28T13:20:47.365230
+Port: COM3
+Baud: 115200
+Angles: [10, 30, 60, 90, 120, 150]
+Requested samples per angle: 300
+Frequency (Hz): 60
+Half cycle (us): 8333.333333333334
+Estimated global offset (us): 231.3391486299373
+Raw acquired rows: 1800
+Filtered rows: 1608
+
+Valid samples per angle after filtering:
+  Angle 10: 293
+  Angle 30: 292
+  Angle 60: 151
+  Angle 90: 292
+  Angle 120: 292
+  Angle 150: 288
